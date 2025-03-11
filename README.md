@@ -28,6 +28,84 @@ Worker nodes are consisted of components:
 * **kube-proxy** - network proxy that maintains network rules which allow network communication of pods
 * **Container Runtime** - software that allows running containers and manages their's lifecycle, e.g. Docker or containerd, absolute base of a cluster
 ## Kubectl
+CLI tool for managing k8s cluster.\
+To avoid typing kubectl everytime use standard alias:
+```
+alias k='kubectl'
+```
+To persist alias use commands:
+```
+cd ~
+echo "alias k='kubectl'" >> .bashrc
+```
+Before using kubectl with cluster you need to configure cluster, user and context information:
+```
+kubectl config set-cluster <cluster_name> --server=<cluster_address>
+kubectl config set-credentials <username> --token=<token>
+kubectl config set-context <context_name> --cluster=<cluster_name> --user=<username>
+kubectl config use-context <context_name>
+```
+### Essential commands
+* **kubectl cluster-info** - displays addresses of the control plane and cluster services
+  * **kubectl cluster-info dump** - displays detailed information about the cluster
+* **kubectl get** - displays information about cluster resources
+  * **kubectl get all** - displays information about all cluster resources
+  * **kubectl get \<resource_type\>** - displays information about type-specified cluster resources, e.g. pods, services, deployments, etc.
+* **kubectl describe \<resource_type\> \<resource_name\>** - displays detailed information about specified resource
+* **kubectl create -f \<manifest_file\>** - creates resource from manifest file
+* **kubectl run \<pod_name\> --image=\<image_name\>** - runs pod of specified name and image
+* **kubectl expose \<resource_type\> \<resource_name\>** - exposes a resource as a new k8s service
+  * **kubectl expose \<resource_type\> \<resource_name\> --type** - option that allows specifying service type, e.g. ClusterIP, NodePort, LoadBalancer, ExternalName
+  * **kubectl expose \<resource_type\> \<resource_name\> --port** - option that allows specifying port number
+* **kubectl apply -f \<manifest_file\>** - applies configuration to existing resource by manifest file, if resource does not exists it acts like kubectl create
+* **kubectl set \<k8s_object\>** - configures specified features of object
+  * **kubectl set resources \<resource_type\> \<resource_name\> --limits=cpu=\<cpu_limit\>,memory=\<memory_limit\> --requests=cpu=\<cpu_limit\>,memory=\<memory_limit\>** - configures compute resource requirements of a resource, --limits stands for maximum compute resource requirements, --requests stands for minimum compute resource requirements
+  * **kubectl set image \<resource_type\>/\<resource_name\> \<container_name\>=\<new_image\>** - sets new image for specified container
+* **kubectl edit \<resource_type\> \<resource_name\>** - allows for live editing of resources within the cluster, from the default editor
+* **kubectl delete \<resource_type\> \<resource_name\>** - deletes specified resource
+  * **kubectl delete -f \<manifest_file\>** - deletes specified resource by manifest file
+* **kubectl logs \<pod_name\>** - displays logs of a container in specified pod
+  * **kubectl logs \<pod_name\> -c \<container_name\>** - displays logs of a specified container in specified pod
+* **kubectl exec \<pod_name\> -c \<container_name\> -- \<command\>** - executes command in specified container in specified pod
+  * **kubectl exec \<pod_name\> -c \<container_name\> -it -- /bin/bash** - opens interactive shell in specified container in specified pod
+* **kubectl attach \<pod_name\> -c \<container_name\>** - allows for attaching to running, specified container in specified pod, similar to kubectl exec
+* **kubectl port-forward \<pod_name\> \<local_port\>:\<pod-port\>** - forwards one or more local ports to specified pod
+* **kubectl proxy --\<port_number\>** - provides proxy server for accessing Kubernetes API services at specified port
+* **kubectl cp** - copies files and directories to and from specified container and user's local system
+  * **kubectl cp /local/path/to/file/or/directory \<namespace_name\>/\<pod_name\>:/container/path -c \<container_name\>** - copies files and directories from specified container to user's local system
+  * **kubectl cp \<namespace_name\>/\<pod_name\>:/container/path -c \<container_name\> /local/path/to/file/or/directory** - copies files and directories from user's local system to specified container
+* **kubectl auth** - inspects authorization
+  * **kubectl auth whoami** - displays current user and her/his attributes
+  * **kubectl auth can-i \<action\> --namespace=\<namespace_name\>** - displays if specified action is allowed for current user in specified namespace
+* **kubectl debug --it \<pod_name\> --image=busybox** - allows for debugging resources using interactive debugging containers
+* **kubectl rollout** - manages the rollout of one or many resources
+  * **kubectl rollout restart \<resource_type\>/\<resource_name\>** - restarts a resource
+  * **kubectl rollout undo \<resource_type\>/\<resource_name\>** - roll backs resource to previous rollout
+  * **kubectl rollout status \<resource_type\>/\<resource_name\>** - displays status of the rollout
+  * **kubectl rollout pause \<resource_type\>/\<resource_name\>** - marks specified resource as paused
+  * **kubectl rollout resume \<resource_type\>/\<resource_name\>** - resumes specified resource
+  * **kubectl rollout history \<resource_type\>/\<resource_name\>** - displays previous rollout revisions and configurations of specified resource
+* **kubectl scale \<resource_type\> \<resource_name\> --replicas=\<number_of_replicas\>** - sets the new number of replicas of a specified resource
+  * **kubectl scale -f \<manifest_file\> --replicas=\<number_of_replicas\>** - sets the new number of replicas of a specified resource by manifest file
+* **kubectl autoscale \<resource_type\> \<resource_name\> --min=\<minimal_number_of_replicas\> --max=\<maximal_number_of_replicas\>** - creates an autoscaler that automatically chooses and sets the number of pods that run in a specified resource
+  * **kubectl autoscale -f \<manifest_file\> --min=\<minimal_number_of_replicas\> --max=\<maximal_number_of_replicas\>** - creates an autoscaler that automatically chooses and sets the number of pods that run in a specified resource by manifest file
+* **kubectl certificate** - modifies certificate resources
+  * **kubectl certificate approve \<certificate_file_name\>** - approves a certificate signing request
+  * **kubectl certificate deny \<certificate_file_name\>** - denies a certificate signing request
+* **kubectl top \<nodes_or_pods\>** - displays CPU and memory consumption of nodes or pods
+* **kubectl cordon \<node_name\>** - marks node as unschedulable
+* **kubectl uncordon \<node_name\>** - marks node as schedulable
+* **kubectl drain \<node_name\>** - enables the safe evacuation of all pods from a node before maintance or other actions, it moves running pods to other nodes
+* **kubectl taint nodes \<node_name\> \<key\>=\<value\>:\<effect\>** - updates the taints on node, taints are used to repel workloads from a node unless the workload tolerates the taint, this is useful for ensuring that only specific types of workloads are scheduled on particular nodes, possible effects: NoSchedule, PreferNoSchedule, NoExecute
+* **kubectl diff -f \<manifest_file\>** - allows for comparing differences between specified version of resource and current version of resource
+* **kubectl patch \<resource_type\> \<resource_name\> -p '\{"spec"\: \{"field"\: "value"\}\}'** - updates specified fields of specified resource
+* **kubectl replace -f \<manifest_file\>** - replaces specified resource with specified manifest file
+* **kubectl wait --for-condition=\<condition\> \<resource_type\> \<resource_name\>** - pauses execution until specified condition is fulfilled, e.g. Ready
+* **kubectl label \<resource_type\> \<resource_name\> \<key\>=\<value\>** - updates the labels on a specified resource
+* **kubectl annotate \<resource_type\> \<resource_name\> \<key\>=\<value\>** - similar to kubectl label, updates the annotations \(arbitrary, non-identifying metadata\) on a specified resource
+* **kubectl api-resources** - displays the supported resources by cluster
+* **kubectl api-versions** - displays the supported versions of resources by cluster
+* **kubectl config view** - displays merged kubeconfig settings or a specified kubeconfig file
 ## Manifests
 ## Pods
 ## Services
