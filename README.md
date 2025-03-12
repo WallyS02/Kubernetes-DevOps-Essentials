@@ -250,10 +250,53 @@ spec:
         - containerPort: <port_number>
 ```
 Similar to pods, avoid using replica sets directly, better use Deployments and similar higher abstraction resource types.
-## Horizontal Pod Autoscalers
-
 ## Deployments
+Deployments are resources managing a set of pods to run application workload, usually one that doesn't maintain state \(for stateful applications check Stateful Sets\).
+
+The spec section of Replica Set manifest consists of:
+* **replicas** - specifies number of desired replicas of pods
+* **selector** - specifies pods which will be part of deployment by label
+* **template** - specifies template of pod that will be created with deployment
+* **strategy** - specifies update strategy
+
+Strategies types:
+* **Recreate** - deletes all existing pods before new ones are created
+* **RollingUpdate** - deletes and creates pods gradually, by replacing old instances with new one in a controlled manner
+  * **maxUnavailable** - parameter that specifies the maximum number or percentage of pods that can be unavailable during the update
+  * **maxSurge** - parameter that specifies the maximum number or percentage of pods that can be created above the desired number of pods
+
+Example of Deployment manifest:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <deployment_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  replicas: <number_of_replicas>
+  selector:
+    matchLabels:
+      <label_name>: <label_value>
+  template:
+    metadata:
+      labels:
+        <label_name>: <label_value>
+    spec:
+      containers:
+      - name: <container_name>
+        image: <image_name>
+        ports:
+        - containerPort: <port_number>
+  strategy:
+    type: <strategy_type>
+    # Rolling Update parametrs
+    rollingUpdate:
+      maxUnavailable: <percentage_or_absolute_number>
+      maxSurge: <percentage_or_absolute_number>
+```
 ## Stateful Sets
+## Horizontal Pod Autoscalers
 ## Config Maps
 ## Secrets
 ## Network Policies
@@ -262,6 +305,9 @@ Similar to pods, avoid using replica sets directly, better use Deployments and s
 ## Daemon Sets
 ## Events
 ## Volumes
+### Persistent Volumes
+### Persistent Volumes Claims
+### Storage Classes
 ## Roles
 ## Helm
 ## Kustomize
