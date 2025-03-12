@@ -267,7 +267,7 @@ Strategies types:
 
 Example of Deployment manifest:
 ```
-apiVersion: apps/v1
+apiVersion: apps/<api_version>
 kind: Deployment
 metadata:
   name: <deployment_name>
@@ -296,6 +296,63 @@ spec:
       maxSurge: <percentage_or_absolute_number>
 ```
 ## Stateful Sets
+Stateful Sets are resources managing a set of pods and maintains a sticky identity for each of them, which is useful for managing stateful applications \(for stateless applications check Deployments\). Every pod has unique and stable name \(e.g. \<pod_name\>-0\, \<pod_name\>-1\, ...). Every pod can have own Persistent Volume that is persisted even after pod deletion. Pods are created and deleted in strict order.
+
+The spec section of Replica Set manifest consists of:
+* **replicas** - specifies number of desired replicas of pods
+* **minReadySeconds** - specifies minimum number of seconds for which newly created pod should be running and ready before being considered available
+* **selector** - specifies pods which will be part of stateful set by label
+* **serviceName** - specifies service name that ensures sticky identity for pods
+* **template** - specifies template of pod that will be created with stateful set
+  * **volumeMounts** - specifies volume mounted to the pod
+* **strategy** - specifies update strategy
+* **volumeClaimTemplates** - specifies update strategy
+
+Strategies types are the same as in Deployments.\
+If volume is used with Stateful Set, it must be created before Stateful Set for Stateful Set to work properly.
+
+Example of StatefulSet manifest:
+```
+apiVersion: apps/<api_version>
+kind: StatefulSet
+metadata:
+  name: <stateful_set_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  replicas: <number_of_replicas>
+  selector:
+    matchLabels:
+      <label_name>: <label_value>
+  serviceName: "<service_name>"
+  template:
+    metadata:
+      labels:
+        <label_name>: <label_value>
+    spec:
+      containers:
+      - name: <container_name>
+        image: <image_name>
+        ports:
+        - containerPort: <port_number>
+        volumeMounts:
+        - name: <volume_name>
+          mountPath: /mount/path/in/container
+  strategy:
+    type: <strategy_type>
+    # Rolling Update parametrs
+    rollingUpdate:
+      maxUnavailable: <percentage_or_absolute_number>
+      maxSurge: <percentage_or_absolute_number>
+  volumeClaimTemplates:
+  - metadata:
+      <label_name>: <label_value>
+    spec:
+      accessModes: [ "<access_modes>" ] # see Volumes
+      resources:
+        requests:
+          storage: <storage_size>
+```
 ## Horizontal Pod Autoscalers
 ## Config Maps
 ## Secrets
