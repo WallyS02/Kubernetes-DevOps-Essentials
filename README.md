@@ -354,7 +354,7 @@ spec:
           storage: <storage_size>
 ```
 ## Horizontal Pod Autoscalers
-Horizontal Pod Autoscalers \(HPA\) are resources that automaticly scales number of replica pods in Deployment, Replica Set or Stateful Set resources. HPA monitors metrics \(e.g. CPU or memory usage\) to scale number of pod replicas up or down. Metrics are collected by Metrics Server or other source of collected metrics \(like Prometheus\). Other sources of metrics require adapter to put them in use with cluster.
+Horizontal Pod Autoscalers \(HPA\) are resources that automatically scales number of replica pods in Deployment, Replica Set or Stateful Set resources. HPA monitors metrics \(e.g. CPU or memory usage\) to scale number of pod replicas up or down. Metrics are collected by Metrics Server or other source of collected metrics \(like Prometheus\). Other sources of metrics require adapter to put them in use with cluster.
 
 The spec section of HPA manifest consists of:
 * **scaleTargetRef** - specifies scaled resource
@@ -384,6 +384,51 @@ spec:
         averageUtilization: <average_resource_consumption>
 ```
 ## Config Maps
+Config Maps are resources that store application configuration in key-value form. They can contain simple values \(like environment variables\) and more complex data too \(like config files\). Data in Config Maps is not secured, to store confidential data use Secrets.
+
+Config Maps manifests consist of data section, instead of spec section, which stores configuration data.
+
+Example of ConfigMap manifest:
+```
+apiVersion: <api_version>
+kind: ConfigMap
+metadata:
+  name: <config_map_name>
+  labels:
+    <label_name>: <label_value>
+data:
+  # Simple values example
+  key=value
+
+  # Config file example
+  <config_file_name>: |
+    key1=value1
+    key2=value2
+    key3=value3
+```
+
+To use Config Maps you can add sections env, volumeMounts and volume to spec and spec.containers sections:
+```
+spec:
+  containers:
+    env:
+      - name: <environment_variable_name_in_application>
+        valueFrom:
+          configMapKeyRef:
+            name: <config_map_name>
+            key: <environment_variable_name_in_config_map>
+    volumeMounts:
+    - name: <volume_name>
+      mountPath: /mount/path/in/container
+      readOnly: true
+  volumes:
+  -  name: <volume_name>
+     configMap:
+       name: <config_map_name>
+       items:
+       - key: <config_file_name_key>
+         path: <config_file_name_path>
+```
 ## Secrets
 ## Network Policies
 ## Namespaces
