@@ -430,6 +430,28 @@ spec:
          path: <config_file_name_path>
 ```
 ## Secrets
+Secrets are resources that store confidential data in encrypted key-value pairs.
+
+Similar to Config Maps, Secrets manifests consist of data section, instead of spec section, which stores confidential data.\
+Secrets have types:
+* **Opaque** - default secret type, used to store any data
+* **kubernetes.io/tls** - used to store SSL/TLS certificates
+* **kubernetes.io/dockerconfigjson** - used to store credentials for Docker registries
+
+Example Secret manifest:
+```
+apiVersion: <api_version>
+kind: Secret
+metadata:
+  name: <secret_name>
+  labels:
+    <label_name>: <label_value>
+type: <secret_type>
+data:
+  <key>: <encoded_value> # usually base64 encoding
+  <key>: <encoded_value>
+```
+To use Secret you can do it the same as in Config Maps changing sections configMapKeyRef to secretKeyRef and configMap to secret.
 ## Network Policies
 ## Namespaces
 ## Jobs and CronJobs
