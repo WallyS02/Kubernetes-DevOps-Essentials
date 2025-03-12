@@ -306,7 +306,7 @@ The spec section of Replica Set manifest consists of:
 * **template** - specifies template of pod that will be created with stateful set
   * **volumeMounts** - specifies volume mounted to the pod
 * **strategy** - specifies update strategy
-* **volumeClaimTemplates** - specifies update strategy
+* **volumeClaimTemplates** - specifies volume claim template
 
 Strategies types are the same as in Deployments.\
 If volume is used with Stateful Set, it must be created before Stateful Set for Stateful Set to work properly.
