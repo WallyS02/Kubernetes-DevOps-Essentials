@@ -37,6 +37,7 @@ To persist alias use commands:
 ```
 cd ~
 echo "alias k='kubectl'" >> .bashrc
+source ~/.bashrc
 ```
 Before using kubectl with cluster you need to configure cluster, user and context information:
 ```
@@ -144,6 +145,44 @@ Best practises:
 * avoid using pods directly, better use Deployments and similar higher abstraction resource types
 * use multi-container pods only if containers need to closely cooperate
 ## Services
+Services are resources that exposes network application working in one or more pods in cluster. They provide stable endpoint for pod communication that masks their location in cluster.
+
+Services types:
+* **ClusterIP** - exposes service inside the cluster, its IP address is reachable only within the cluster, can be used for internal cluster communication
+* **NodePort** - exposes service on static port of every node in the cluster, can be accessed from outside the cluster
+* **LoadBalancer** - exposes service externally using an external load balancer, it must be provided or cluster can be integrated with cloud provider
+* **ExternalName** - maps service on external DNS name, does not create endpoint inside the cluster, can be used for integration with external services
+
+The spec section of Service manifest consists of:
+* **selector** - specifies pods which will be part of service by label
+* **ports** - specifies service ports, port stands for service port, targetPort stands for container port
+* **type** - specifies service type
+
+Example of ClusterIP, NodePort or LoadBalancer Service manifest:
+```
+apiVersion: <api_version>
+kind: Service
+metadata:
+  name: <service_name>
+spec:
+  selector:
+    <label_name>: <label_value>
+  ports:
+  - protocol: <TCP_UDP_or_SCTP>
+    port: <port_number>
+    targetPort: <port_number>
+  type: <ClusterIP_NodePort_or_LoadBalancer>
+```
+Example of ExternalName Service manifest:
+```
+apiVersion: <api_version>
+kind: Service
+metadata:
+  name: <service_name>
+spec:
+  type: ExternalName
+  externalName: <external_dns_name>
+```
 ## Ingresses
 ## Replica Sets
 ## Replication Controllers
