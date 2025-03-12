@@ -576,6 +576,39 @@ spec:
   failedJobsHistoryLimit: <number_of_failed_cron_jobs_in_history>
 ```
 ## Daemon Sets
+Daemon Sets are resources that ensure that pod is ran on all or chosen nodes of cluster. They can useful for services that have to be present on every node, like monitoring agents, log aggregation or network services.
+
+The spec section of Daemon Set manifest consists of:
+* **selector** - specifies pods which will be part of daemon set by label
+* **template** - specifies template of pod that will be used with daemon set
+* **tolerations** - specifies the tolerances that allow pods to run on nodes with specific taints
+
+Example of Daemon Set manifest:
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: <daemon_set_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  selector:
+    matchLabels:
+      name: <daemon_set_name>
+  template:
+    metadata:
+      labels:
+        name: <daemon_set_name>
+    spec:
+      containers:
+      - name: <container_name>
+        image: <image_name>
+        ports:
+        - containerPort: <port_number>
+      tolerations:
+      - key: <toleration_key>
+        effect: <toleration_effect>
+```
 ## Events
 ## Volumes
 ### Persistent Volumes
