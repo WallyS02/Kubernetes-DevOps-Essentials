@@ -107,6 +107,13 @@ kubectl config use-context <context_name>
 * **kubectl api-versions** - displays the supported versions of resources by cluster
 * **kubectl config view** - displays merged kubeconfig settings or a specified kubeconfig file
 ## Manifests
+Manifest are YAML or JSON \(usually YAML\) configuration files that define desired state of resources in cluster. Use them to manage resources in cluster.
+
+Manifest consists of sections:
+* **apiVersion** - specifies the Kubernetes API version that the manifest applies to
+* **kind** - specifies resource type
+* **metadata** - contains resource metadata like name, labels and annotations
+* **spec** - contains desired resource state, its structure depends on a resource type
 ## Pods
 ## Services
 ## Ingresses
