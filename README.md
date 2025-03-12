@@ -184,6 +184,42 @@ spec:
   externalName: <external_dns_name>
 ```
 ## Ingresses
+Ingresses are resources that manage external access to services in cluster, usually through HTTP/HTTPS. It works as a routing layer that directs traffic to services based on rules defined in manifest. Ingresses support SSL/TLS certificates for sercure connection.
+
+In order for an Ingresses to work in cluster, there must be an Ingress Controller that implements Ingresses rules.\
+Popular Ingress Controller are:
+* NGINX Ingress Controller
+* Traefik
+* HAProxy
+* Istio Gateway
+
+Example of Ingress manifest:
+```
+apiVersion: networking.k8s.io/<api_version>
+kind: Ingress
+metadata:
+  name: <ingress_name>
+  annotations:
+    # Annotations allow for Ingress Controller behaviour customization, in below case - NGINX Ingress Controller
+    nginx.ingress.kubernetes.io/rewrite-target: <target_URI_where_traffic_must_be_redirected>
+spec:
+  rules:
+  - host: <hostname>
+    http:
+      paths:
+      - path: <path>
+        pathType: Prefix
+        backend:
+          service:
+            name: <service_name>
+            port:
+              number: <port_number>
+  tls:
+  - hosts:
+    - <hostname>
+    secretName: <tls_secret>
+```
+## Gateway
 ## Replica Sets
 ## Replication Controllers
 ## Autoscalers
