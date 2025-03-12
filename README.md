@@ -141,9 +141,8 @@ spec:
     command: ["command", "to", "execute"]
     restartPolicy: <Always_OnFailure_or_Never>
 ```
-Best practises:
-* avoid using pods directly, better use Deployments and similar higher abstraction resource types
-* use multi-container pods only if containers need to closely cooperate
+Avoid using pods directly, better use Deployments and similar higher abstraction resource types.\
+Use multi-container pods only if containers need to closely cooperate.
 ## Services
 Services are resources that exposes network application working in one or more pods in cluster. They provide stable endpoint for pod communication that masks their location in cluster.
 
@@ -219,11 +218,40 @@ spec:
     - <hostname>
     secretName: <tls_secret>
 ```
-## Gateway
-
 ## Replica Sets
-## Replication Controllers
-## Autoscalers
+Replica Sets are resources that maintain a stable set of replica pods of specified quantity. If any pod fails, Replica Set will delete it and automaticaly create a new one.
+
+The spec section of Replica Set manifest consists of:
+* **selector** - specifies pods which will be part of replica set by label
+* **template** - specifies template of pod that will be created with replica set
+
+Example of ReplicaSet manifest:
+```
+apiVersion: apps/<api_version>
+kind: ReplicaSet
+metadata:
+  name: <replica_set_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  replicas: <number_of_replicas>
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        <label_name>: <label_value>
+    spec:
+      containers:
+      - name: <container_name>
+        image: <image_name>
+        ports:
+        - containerPort: <port_number>
+```
+Similar to pods, avoid using replica sets directly, better use Deployments and similar higher abstraction resource types.
+## Horizontal Pod Autoscalers
+
 ## Deployments
 ## Stateful Sets
 ## Config Maps
