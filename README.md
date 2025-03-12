@@ -118,7 +118,7 @@ Manifest consists of sections:
 ## Pods
 Pods are the most basic unit in Kubernetes. It consists of one or more containers. Containers share namespace, volumes, IP address, port and other resources inside pod. Each pod has a unique inside cluster. Pods are short-lived and can be deleted, replaced and moved inside the cluster, k8s does not fix malfunctioning pods, instead it deletes it and creates a new one.
 
-Example of pod manifest:
+Example of Pod manifest:
 ```
 apiVersion: <api_version>
 kind: Pod
@@ -438,7 +438,7 @@ Secrets have types:
 * **kubernetes.io/tls** - used to store SSL/TLS certificates
 * **kubernetes.io/dockerconfigjson** - used to store credentials for Docker registries
 
-Example Secret manifest:
+Example of Secret manifest:
 ```
 apiVersion: <api_version>
 kind: Secret
@@ -453,6 +453,47 @@ data:
 ```
 To use Secret you can do it the same as in Config Maps changing sections configMapKeyRef to secretKeyRef and configMap to secret.
 ## Network Policies
+Network Policies are resources that define rules of network traffic between pods inside the cluster, specifing which pods can communicate with each other.
+
+The spec section of Network Policy manifest consists of:
+* **podSelector** - specifies pods which will be affected by network policy using labels
+* **policyTypes** - specifies rules type
+* **ingress** - specifies rules for incoming network traffic
+* **egress** - specifies rules for outgoing network traffic
+
+Example of Network Policy manifest:
+```
+apiVersion: networking.k8s.io/<api_version>
+kind: NetworkPolicy
+metadata:
+  name: <network_policy_name>
+  namespace: <namespace_name>
+spec:
+  podSelector:
+    matchLabels:
+      <label_name>: <label_value>
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector: # specifies pods that can communicate with pods affected by policy
+        matchLabels:
+          <label_name>: <label_value>
+    - namespaceSelector: # specifies namespaces that can communicate with pods affected by policy
+        matchLabels:
+          <label_name>: <label_value>
+    ports: # specifies ports allowed for traffic
+    - protocol: <protocol>
+      port: <port_number>
+  egress:
+  - to:
+    - ipBlock: # specifies particular IP CIDR ranges that can communicate with pods affected by policy
+        cidr: <ip/mask>
+    ports:
+    - protocol: <protocol>
+      port: <port_number>
+```
 ## Namespaces
 ## Jobs and CronJobs
 ## Daemon Sets
