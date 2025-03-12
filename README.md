@@ -208,7 +208,7 @@ spec:
     http:
       paths:
       - path: <path>
-        pathType: Prefix
+        pathType: <ImplementationSpecific_Exact_or_Prefix>
         backend:
           service:
             name: <service_name>
@@ -220,6 +220,7 @@ spec:
     secretName: <tls_secret>
 ```
 ## Gateway
+
 ## Replica Sets
 ## Replication Controllers
 ## Autoscalers
