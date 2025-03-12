@@ -585,7 +585,7 @@ The spec section of Daemon Set manifest consists of:
 
 Example of Daemon Set manifest:
 ```
-apiVersion: apps/v1
+apiVersion: apps/<api_version>
 kind: DaemonSet
 metadata:
   name: <daemon_set_name>
@@ -609,9 +609,37 @@ spec:
       - key: <toleration_key>
         effect: <toleration_effect>
 ```
-## Events
 ## Volumes
+Volumes provide a way for containers in pods to access and share persisted data via file system.
+# TODO below!!!
 ### Persistent Volumes
+Persistent Volumes \(PV\) are resources that allow for persistent data storing. They can be shared by multiple pods, even after their deletion or transfer somewhere else.
+
+The spec section of Persistent Volume manifest consists of:
+* **capacity** - specifies capacity of PV \(e.g. 10Gi\)
+* **accessModes** - specifies access mode, ReadWriteOnce - the volume can be mounted as read-write by a single node, ReadOnlyMany - the volume can be mounted as read-only by many nodes, ReadWriteMany - the volume can be mounted as read-write by many nodes
+* **persistentVolumeReclaimPolicy** - specifies reclaim policy, Retain - , Delete - , Recycle - 
+* **storageClassName** - specifies storage class
+* **hostPath** - specifies host path where data is stored \(only for local PV\)
+
+Example of Persistent Volume manifest:
+```
+apiVersion: <api_version>
+kind: PersistentVolume
+metadata:
+  name: <pv_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  capacity:
+    storage: <storage_size>
+  accessModes:
+    - <access_mode>
+  persistentVolumeReclaimPolicy: <reclaim_policy>
+  storageClassName: <storage_class_name>
+  hostPath:
+    path: "/mnt/data"
+```
 ### Persistent Volumes Claims
 ### Storage Classes
 ## Roles
