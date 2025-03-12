@@ -253,7 +253,7 @@ Similar to pods, avoid using replica sets directly, better use Deployments and s
 ## Deployments
 Deployments are resources managing a set of pods to run application workload, usually one that doesn't maintain state \(for stateful applications check Stateful Sets\).
 
-The spec section of Replica Set manifest consists of:
+The spec section of Deployment manifest consists of:
 * **replicas** - specifies number of desired replicas of pods
 * **selector** - specifies pods which will be part of deployment by label
 * **template** - specifies template of pod that will be created with deployment
@@ -298,7 +298,7 @@ spec:
 ## Stateful Sets
 Stateful Sets are resources managing a set of pods and maintains a sticky identity for each of them, which is useful for managing stateful applications \(for stateless applications check Deployments\). Every pod has unique and stable name \(e.g. \<pod_name\>-0\, \<pod_name\>-1\, ...). Every pod can have own Persistent Volume that is persisted even after pod deletion. Pods are created and deleted in strict order.
 
-The spec section of Replica Set manifest consists of:
+The spec section of Stateful Set manifest consists of:
 * **replicas** - specifies number of desired replicas of pods
 * **minReadySeconds** - specifies minimum number of seconds for which newly created pod should be running and ready before being considered available
 * **selector** - specifies pods which will be part of stateful set by label
@@ -354,6 +354,35 @@ spec:
           storage: <storage_size>
 ```
 ## Horizontal Pod Autoscalers
+Horizontal Pod Autoscalers \(HPA\) are resources that automaticly scales number of replica pods in Deployment, Replica Set or Stateful Set resources. HPA monitors metrics \(e.g. CPU or memory usage\) to scale number of pod replicas up or down. Metrics are collected by Metrics Server or other source of collected metrics \(like Prometheus\). Other sources of metrics require adapter to put them in use with cluster.
+
+The spec section of HPA manifest consists of:
+* **scaleTargetRef** - specifies scaled resource
+* **minReplicas** - specifies minimal number of pod replicas
+* **maxReplicas** - specifies maximal number of pod replicas
+* **metrics** - specifies metrics that will be used in scaling algorithm \(e.g. CPU and memory usage\)
+
+Example of HPA manifest:
+```
+apiVersion: autoscaling/<api_version>
+kind: HorizontalPodAutoscaler
+metadata:
+  name: <hpa_name>
+spec:
+  scaleTargetRef:
+    apiVersion: apps/<api_version>
+    kind: <resource_type>
+    name: <resource_name>
+  minReplicas: <minimum_number_of_replicas>
+  maxReplicas: <maximum_number_of_replicas>
+  metrics:
+  - type: Resource
+    resource:
+      name: <cpu_or_memory>
+      target:
+        type: Utilization
+        averageUtilization: <average_resource_consumption>
+```
 ## Config Maps
 ## Secrets
 ## Network Policies
