@@ -107,6 +107,7 @@ kubectl config use-context <context_name>
 * **kubectl api-resources** - displays the supported resources by cluster
 * **kubectl api-versions** - displays the supported versions of resources by cluster
 * **kubectl config view** - displays merged kubeconfig settings or a specified kubeconfig file
+* **kubectl config set-context --current --namespace=\<namespace_name\>** - switches context to specified namespace
 ## Manifests
 Manifest are YAML or JSON \(usually YAML\) configuration files that define desired state of resources in cluster. Use them to manage resources in cluster.
 
@@ -495,6 +496,23 @@ spec:
       port: <port_number>
 ```
 ## Namespaces
+Namespaces are logical units within a cluster that allow you to group and isolate resources. It resembles virtual clusters within a single physical cluster.
+
+Cluster has 4 default namespaces:
+* **default** - default namespace that in which resources are created if no other namespace is specified
+* **kube-system** - namespace for Kubernetes system resources such as kube-dns, kube-proxy, etc.
+* **kube-public** - namespace available to all users, often used to share public information
+* **kube-node-lease** - namespace used to store information about node leases
+
+Example of Namespace manifest:
+```
+apiVersion: <api_version>
+kind: Namespace
+metadata:
+  name: <namespace_name>
+```
+To make the command apply to the specified namespace add **--namespace=\<namespace_name\>** to any command.\
+Namespaces access should be controlled by RBAC, see Roles.
 ## Jobs and CronJobs
 ## Daemon Sets
 ## Events
