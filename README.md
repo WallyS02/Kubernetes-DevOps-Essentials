@@ -115,6 +115,34 @@ Manifest consists of sections:
 * **metadata** - contains resource metadata like name, labels and annotations
 * **spec** - contains desired resource state, its structure depends on a resource type
 ## Pods
+Pods are the most basic unit in Kubernetes. It consists of one or more containers. Containers share namespace, volumes, IP address, port and other resources inside pod. Each pod has a unique inside cluster. Pods are short-lived and can be deleted, replaced and moved inside the cluster, k8s does not fix malfunctioning pods, instead it deletes it and creates a new one.
+
+Example of pod manifest:
+```
+apiVersion: <api_version>
+kind: Pod
+metadata:
+  name: <pod_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  containers:
+  - name: <container_name>
+    image: <container_image>
+    ports:
+    - containerPort: <port_number>
+    command: ["command", "to", "execute"]
+    restartPolicy: <Always_OnFailure_or_Never>
+  - name: <container_name>
+    image: <container_image>
+    ports:
+    - containerPort: <port_number>
+    command: ["command", "to", "execute"]
+    restartPolicy: <Always_OnFailure_or_Never>
+```
+Best practises:
+* avoid using pods directly, better use Deployments and similar higher abstraction resource types
+* use multi-container pods only if containers need to closely cooperate
 ## Services
 ## Ingresses
 ## Replica Sets
