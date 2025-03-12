@@ -514,6 +514,67 @@ metadata:
 To make the command apply to the specified namespace add **--namespace=\<namespace_name\>** to any command.\
 Namespaces access should be controlled by RBAC, see Roles.
 ## Jobs and CronJobs
+Jobs are resources that manage tasks which are pods that are stopped right after finishing its actions. They can be useful for batch jobs like executing scripts or generating reports.
+
+The spec section of Job manifest consists of:
+* **completions** - specifies how many times job needs to be completed successfully
+* **parallelism** - specifies how many pods can be run in parallel
+* **backoffLimit** - specifies maximum number of retries in case of failure
+* **template** - specifies template of pod that will be created with job
+* **restartPolicy** - specifies restart politics for pod, Never - pods are not restarted, OnFailure - pods are restarted on failure
+
+Example of Job manifest:
+```
+apiVersion: batch/<api_version>
+kind: Job
+metadata:
+  name: <job_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  completions: <number_of_completions>
+  parallelism: <number_of_parallel_pods>
+  backoffLimit: <maximum_number_of_retries>
+  template:
+    spec:
+      containers:
+      - name: <container_name>
+        image: <image_name>
+        command: ["command", "to", "execute"]
+      restartPolicy: <restart_policy_type>
+```
+CronJobs are resources that act like Jobs but are scheduled to execute with cron-format schedule. They automate periodic Jobs.
+
+The spec section of CronJob manifest consists of:
+* **schedule** - specifies job's cron-format schedule
+* **jobTemplate** - specifies template of job that will be used with cron job
+* **concurrencyPolicy** - specifies concurrency policy, Allow - allows for concurrency, Forbid - forbids for concurrency, skips new job run if previous hasn't finished yet, Replace - replaces previous job run with new one if previous hasn't finished yet
+* **successfulJobsHistoryLimit** - specifies how many succeeded cron jobs should be stored in history
+* **failedJobsHistoryLimit** - specifies how many failed cron jobs should be stored in history
+
+Example of CronJob manifest:
+```
+apiVersion: batch/<api_version>
+kind: CronJob
+metadata:
+  name: <cron_job_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  schedule: "<cron_schedule>"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: <container_name>
+            image: <image_name>
+            command: ["command", "to", "execute"]
+          restartPolicy: <restart_policy_type>
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: <number_of_suceeded_cron_jobs_in_history>
+  failedJobsHistoryLimit: <number_of_failed_cron_jobs_in_history>
+```
 ## Daemon Sets
 ## Events
 ## Volumes
