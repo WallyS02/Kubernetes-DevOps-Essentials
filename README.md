@@ -633,8 +633,8 @@ PV types:
 * **local** - stores data on devices mounted locally to your cluster's nodes, you must set nodeAffinity when using it
   * **path** - path to directory in which data will be stored
 * **nfs** - used to access Network File System (NFS) mounts
-  * **server** - nfs server address
-  * **path** - path to directory in which data will be stored
+  * **server** - nfs server address or hostname
+  * **path** - path that is exported by the NFS server
 * **fc** - fibre Channel (FC) storage attachments
 * **iscsi** - iSCSI (SCSI over IP) storage attachments
 
@@ -704,6 +704,48 @@ volumes:
       claimName: <pvc_name>
 ```
 ### Storage Classes
+Storage Classes \(SC\) are resources that dynamically provision Persistent Volumes based on Persistent Volume Claims.
+
+The spec section of Persistent Volume Claim manifest consists of:
+* **provisioner** - determines what volume plugin is used for provisioning PVs \(e.g. kubernetes.io/aws-ebs\)
+* **parameters** - parameters that describe volumes belonging to the storage class, different parameters may be accepted depending on the provisioner
+* **reclaimPolicy** - specifies reclaim policy of PVs created by Storage Class, Retain - manual reclamation, Delete - delete the volume
+* **allowVolumeExpansion** - specifies if PV can be expanded after creation, allowing to resize the volume by editing the corresponding PVC object, requesting a new larger amount of storage
+* **mountOptions** - specifies mount options of PVs created by Storage Class
+* **allowedTopologies** - specifies volume's topology restrictions by matching labels
+
+Parameters for some provisioners:
+* **AWS EBS**
+  * **type** - specifies EBS volume type, possible values: gp2, io1, st1, sc1, gp2
+  * **iopsPerGB** - specifies number of IOPS \(Input/Output operations Per Second\) per GB for volumes of type io1
+  * **encrypted** - specifies if volume is encrypted
+  * **tagSpecification** - fields with this prefix are applied to dynamically provisioned EBS volumes
+  * **csi.storage.k8s.io/fstype** - specifies filesystem that will be used for volume, default is ext4
+* **AWS EFS**
+  * **provisioningMode** - specifies type of volume to be provisioned by Amazon EFS, possible values: efs-ap, efs-sc
+  * **fileSystemId** - specifies file system under which the access point is created
+  * **directoryPerms** - specifies directory permissions of the root directory created by the access point
+* **nfs**
+  * **server** - specifies hostname or IP address of the NFS server
+  * **path** - specifies path that is exported by the NFS server
+
+Example of Storage Class manifest:
+```
+apiVersion: storage.k8s.io/<api_version>
+kind: StorageClass
+metadata:
+  name: <sc_name>
+provisioner: <provisioner>
+parameters:
+  <field>: <value>
+reclaimPolicy: <reclaim_policy>
+allowVolumeExpansion: <true_or_false>
+allowedTopologies:
+- matchLabelExpressions:
+  - key: <key>
+    values:
+    - <value>
+```
 ## Roles
 ## Helm
 ## Kustomize
