@@ -611,16 +611,32 @@ spec:
 ```
 ## Volumes
 Volumes provide a way for containers in pods to access and share persisted data via file system.
-# TODO below!!!
 ### Persistent Volumes
 Persistent Volumes \(PV\) are resources that allow for persistent data storing. They can be shared by multiple pods, even after their deletion or transfer somewhere else.
 
 The spec section of Persistent Volume manifest consists of:
 * **capacity** - specifies capacity of PV \(e.g. 10Gi\)
-* **accessModes** - specifies access mode, ReadWriteOnce - the volume can be mounted as read-write by a single node, ReadOnlyMany - the volume can be mounted as read-only by many nodes, ReadWriteMany - the volume can be mounted as read-write by many nodes
-* **persistentVolumeReclaimPolicy** - specifies reclaim policy, Retain - , Delete - , Recycle - 
+* **volumeMode** - specifies volume mode, Filesystem - default or Block
+* **accessModes** - specifies access mode, ReadWriteOnce - the volume can be mounted as read-write by a single node, ReadOnlyMany - the volume can be mounted as read-only by many nodes, ReadWriteMany - the volume can be mounted as read-write by many nodes, ReadWriteOncePod - the volume can be mounted as read-write by a single pod
+* **persistentVolumeReclaimPolicy** - specifies reclaim policy, Retain - manual reclamation, Delete - delete the volume, Recycle - basic scrub \(rm -rf /thevolume/*\)
 * **storageClassName** - specifies storage class
-* **hostPath** - specifies host path where data is stored \(only for local PV\)
+* **\<persistent_volume_type\>** - specifies volume type
+
+PV types:
+* **csi** - allows integration with storage providers that support the Container Storage Interface (CSI) specification, such as the block storage services provided by cloud platforms
+  * **driver** - field that specifies the name of volume driver to use
+  * **volumeHandle** - a string value that uniquely identifies the volume
+  * **fsType** - if the PV's VolumeMode is Filesystem, then this field may be used to specify the filesystem that should be used to mount the volume
+  * **volumeAttributes** - a map of string to string that specifies static properties of a volume
+* **hostPath** - stores data within a named directory on a node \(this is designed for testing purposes and doesn't work with multi-node clusters\)
+  * **path** - path to directory in which data will be stored
+* **local** - stores data on devices mounted locally to your cluster's nodes, you must set nodeAffinity when using it
+  * **path** - path to directory in which data will be stored
+* **nfs** - used to access Network File System (NFS) mounts
+  * **server** - nfs server address
+  * **path** - path to directory in which data will be stored
+* **fc** - fibre Channel (FC) storage attachments
+* **iscsi** - iSCSI (SCSI over IP) storage attachments
 
 Example of Persistent Volume manifest:
 ```
@@ -633,13 +649,16 @@ metadata:
 spec:
   capacity:
     storage: <storage_size>
+  volumeMode: <volume_mode>
   accessModes:
     - <access_mode>
   persistentVolumeReclaimPolicy: <reclaim_policy>
   storageClassName: <storage_class_name>
-  hostPath:
-    path: "/mnt/data"
+  <persistent_volume_type>:
+    <field>: <value>
 ```
+To mount volume to a resource use volumes and volumeMounts fields, check Config Maps for example.\
+Avoid using PV directly, better to use Storage Classes for dynamic PV provisioning.
 ### Persistent Volumes Claims
 ### Storage Classes
 ## Roles
