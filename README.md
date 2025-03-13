@@ -660,6 +660,49 @@ spec:
 To mount volume to a resource use volumes and volumeMounts fields, check Config Maps for example.\
 Avoid using PV directly, better to use Storage Classes for dynamic PV provisioning.
 ### Persistent Volumes Claims
+Persistent Volume Claims \(PVC\) are resources that represent requests of cluster users for Persistent Volumes.
+
+The spec section of Persistent Volume Claim manifest consists of:
+* **resources.requests.storage** - specifies requested capacity of PVC \(e.g. 10Gi\)
+* **volumeMode** - specifies volume mode, Filesystem - default or Block
+* **accessModes** - specifies access mode, ReadWriteOnce - the volume can be mounted as read-write by a single node, ReadOnlyMany - the volume can be mounted as read-only by many nodes, ReadWriteMany - the volume can be mounted as read-write by many nodes, ReadWriteOncePod - the volume can be mounted as read-write by a single pod
+* **storageClassName** - specifies storage class
+* **selector** - specifies label selector to further filter the set of volumes, matchLabels matches by label, matchExpressions is a list of requirements made by specifying key, list of values, and operator that relates the key and values
+
+Example of Persistent Volume Claim manifest:
+```
+apiVersion: <api_version>
+kind: PersistentVolumeClaim
+metadata:
+  name: <pvc_name>
+  labels:
+    <label_name>: <label_value>
+spec:
+  accessModes:
+    - <access_mode>
+  resources:
+    requests:
+      storage: <storage_size>
+  storageClassName: <storage_class_name>
+  selector:
+    matchLabels:
+      <label_name>: <label_value>
+    matchExpressions:
+      - {key: <key>, operator: <operator>, values: [<values>]}
+```
+To use PVC with resources add volumes to the spec section and volumeMounts to containers section:
+```
+containers:
+- name: <container_name>
+  image: <image_name>
+  volumeMounts:
+    - mountPath: /mount/path/in/container
+      name: <volume_name>
+volumes:
+  - name: <volume_name>
+    persistentVolumeClaim:
+      claimName: <pvc_name>
+```
 ### Storage Classes
 ## Roles
 ## Helm
