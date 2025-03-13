@@ -747,5 +747,50 @@ allowedTopologies:
     - <value>
 ```
 ## Roles
+Roles are resources used for defining permissions for users, based on RBAC, inside the cluster. To use them, RBAC must be enabled in cluster. Roles divide on 2 kinds: Role - role is defined within specified namespace, Cluster Role - role is defined cluster-wide.
+
+Role or Cluster Role manifest consists of rules section instead of spec section. Rules section consists of:
+* **apiGroups** - specifies the API groups that the resources belong to, empty value means core API
+* **resources** - specifies resources to which permissions are granted
+* **verbs** - specifies the operations that can be performed
+
+Example of Role or Cluster Role manifest:
+```
+apiVersion: rbac.authorization.k8s.io/<api_version>
+kind: <Role_or_ClusterRole>
+metadata:
+  # namespace only if kind: Role
+  namespace: <namespace_name>
+  name: <role_name>
+rules:
+- apiGroups: ["apiGroup", "list"]
+  resources: ["resources", "list"]
+  verbs: ["verbs", "list"]
+```
+To bind role with user or group use RoleBinding or ClusterRoleBinding.
+
+RoleBinding and ClusterRoleBinding manifest consist of subjects - specifies to whom permissions are granted - and roleRef - specifies role which is binded - sections.\
+Both sections consists of:
+* **kind** - specifies role kind \(Role or ClusterRole\) or user kind \(User or Group\)
+* **name** - specifies role name or username
+* **apiGroup** - specifies the API group that the binding belongs to
+
+Example of RoleBinding or ClusterRoleBinding manifest:
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: <RoleBinding_or_ClusterRoleBinding>
+metadata:
+  name: <role_binding_name>
+  # namespace only if kind: RoleBinding
+  namespace: <namespace_name>
+subjects:
+- kind: <User_or_Group>
+  name: <username>
+  apiGroup: <api_group>
+roleRef:
+  kind: <role_type>
+  name: <role_name>
+  apiGroup: <api_group>
+```
 ## Helm
 ## Kustomize
