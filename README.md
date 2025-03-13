@@ -693,9 +693,9 @@ spec:
 To use PVC with resources add volumes to the spec section and volumeMounts to containers section:
 ```
 containers:
-- name: <container_name>
-  image: <image_name>
-  volumeMounts:
+  - name: <container_name>
+    image: <image_name>
+    volumeMounts:
     - mountPath: /mount/path/in/container
       name: <volume_name>
 volumes:
