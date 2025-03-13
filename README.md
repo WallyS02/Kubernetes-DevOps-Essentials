@@ -837,3 +837,86 @@ After preparing chart use **helm package \<chart_name\>** to package chart and *
 * **helm create \<chart_name\>** - creates a new chart
 * **helm package \<chart_path\>** - packages a chart directory into a chart archive
 ## Kustomize
+Kustomize is a Kubernetes configuration management tool that allows you to customize YAML manifests by applying overlays to base manifests without having to modify them directly. It eases customizing manifests, e.g. for keeping names, labels and annotations of resources consistent, easier mapping of Config Maps and Secrets to resources or customizing for different environments \(development, test, staging, production\).
+
+Usual Kustomize file structure:
+```
+base/
+├── kustomization.yaml
+├── <resource1>.yaml
+└── <resource2>.yaml
+overlays/
+├── dev/
+|   ├── config.properties
+|   ├── kustomization.yaml
+|   └── <resource>.yaml
+├── test/
+|   ├── config.properties
+|   ├── kustomization.yaml
+|   └── <resource>.yaml
+└── prod/
+|   ├── config.properties
+|   ├── kustomization.yaml
+|   └── <resource>.yaml
+```
+Base directory is a set of base manifests common for all environments.\
+Overlays directory is a set of overlays on base manifests for customizing them to specific environments. Each directory inside this directory is a overlay for different environment.\
+kustomization.yaml file in base directory specifies:
+* manifests of resources which will be included in customization
+* common attributes like names, labels and annotations that should stay consistent in every resource
+* generators that manage complexities with creating/managing Config Maps and Secrets by automatically creating and attaching them to resources
+* any other changes to apply
+
+Example of kustomization.yaml file in base directory:
+```
+resources:
+- <resource1>.yaml
+- <resource2>.yaml
+
+commonLabels:
+  <label>: <value>
+
+commonAnnotatios:
+  <annotation>: <value>
+
+namePrefix:
+  <prefix_value>
+
+nameSuffix:
+  <suffix_value>
+
+configMapGenerator:
+- name: <config_map_name>
+  env: <env_file_like_config.properties>
+```
+
+kustomization.yaml file in overlays/\<environment\> directory specifies:
+* base directory
+* patch manifests that overlay base configuration
+* any other changes to apply \(e.g. changing namespace\)
+
+Example of kustomization.yaml file in overlays/\<environment\> directory:
+```
+bases:
+- ../../base
+
+patches:
+- <patch_manifest_name>.yaml
+
+# any other changes e.g.:
+
+namespace: <namespace_name>
+
+configMapGenerator:
+- name: <config_map_name>
+  env: <env_file_like_config.properties>
+```
+
+To view customized, generated manifests:
+```
+kubectl kustomize <kustomization_directory>
+```
+To apply final, customized manifests in cluster:
+```
+kubectl apply -k <kustomization_directory>
+```
