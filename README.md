@@ -793,4 +793,47 @@ roleRef:
   apiGroup: <api_group>
 ```
 ## Helm
+Helm is a package manager for Kubernetes. It manages manifests and distributes them in public or private repositories.
+
+**Charts** are packages that contain all Kubernetes manifests needed for running applications in cluster. Chart instance running in the cluster is named Release.
+
+To install Helm use command:
+```
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+To create chart use **helm create \<chart_name\>**.\
+Generated chart structure:
+```
+my-chart/
+├── Chart.yaml
+├── values.yaml
+├── templates/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── _helpers.tpl
+└── charts/
+```
+Helm uses templating engine that provides data from values.yaml to template files. Use **\{\{ .Values.\<field\> \}\}** in template files to inject values outside the template.
+* **Chart.yaml** - file containing meta data about chart
+* **values.yaml** - file containing default values for the template files
+* **charts/** - directory containing actual template files
+* **templates/** - directory containing chart dependencies
+
+After preparing chart use **helm package \<chart_name\>** to package chart and **helm install \<release_name\> \<chart_name\>** to install chart in cluster.
+### Essential commands
+* **helm repo** - repository management
+  * **helm repo add \<repository_name\> \<repository_url\>** - adds chart repository
+  * **helm repo list \<repository_name\> \<repository_url\>** - lists chart repositories
+  * **helm repo remove \<repository_name\> \<repository_url\>** - removes chart repository
+  * **helm repo update \<repository_name\> \<repository_url\>** - updates information of available charts locally from chart repository
+* **helm search repo \<keyword\>** - searches repositories by keyword in charts
+* **helm install \<release_name\> \<chart_name\>** - installs chart
+* **helm status \<release_name\>** - displays the status of specified release
+  * **helm install --values=\<values_file_name\> </values_file_name>\<release_name\> \<chart_name\>** - option that specifies custom values file which overrides values from default one
+* **helm list** - lists realeses
+* **helm upgrade \<release_name\> \<chart_name\>** - upgrades a release
+* **helm uninstall \<release_name\>** - uninstalls release
+* **helm rollback \<release_name\>** - roll backs a release to a previous version
+* **helm create \<chart_name\>** - creates a new chart
+* **helm package \<chart_path\>** - packages a chart directory into a chart archive
 ## Kustomize
