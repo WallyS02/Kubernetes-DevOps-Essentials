@@ -306,7 +306,7 @@ The spec section of Stateful Set manifest consists of:
 * **serviceName** - specifies service name that ensures sticky identity for pods
 * **template** - specifies template of pod that will be created with stateful set
   * **volumeMounts** - specifies volume mounted to the pod
-* **strategy** - specifies update strategy
+* **updateStrategy** - specifies update strategy
 * **volumeClaimTemplates** - specifies volume claim template
 
 Strategies types are the same as in Deployments.\
@@ -339,12 +339,12 @@ spec:
         volumeMounts:
         - name: <volume_name>
           mountPath: /mount/path/in/container
-  strategy:
+  updateStrategy:
     type: <strategy_type>
     # Rolling Update parametrs
     rollingUpdate:
       maxUnavailable: <percentage_or_absolute_number>
-      maxSurge: <percentage_or_absolute_number>
+      partition: <percentage_or_absolute_number>
   volumeClaimTemplates:
   - metadata:
       <label_name>: <label_value>
