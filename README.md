@@ -816,8 +816,8 @@ my-chart/
 Helm uses templating engine that provides data from values.yaml to template files. Use **\{\{ .Values.\<field\> \}\}** in template files to inject values outside the template.
 * **Chart.yaml** - file containing meta data about chart
 * **values.yaml** - file containing default values for the template files
-* **charts/** - directory containing actual template files
-* **templates/** - directory containing chart dependencies
+* **templates/** - directory where manifests are defined as templates
+* **charts/** - optional directory that may contain sub-charts
 
 After preparing chart use **helm package \<chart_name\>** to package chart and **helm install \<release_name\> \<chart_name\>** to install chart in cluster.
 ### Essential commands
