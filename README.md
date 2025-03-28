@@ -1,4 +1,4 @@
-# Kubernetes-DevOps-Essentials
+# Kubernetes DevOps Essentials
 ## If I'll find any other feature to be useful - it'll surely be added!
 ## What is it?
 Container orchestration platform that automates their managing. It provides many benefits - allows for high availability services, auto-scaling containers, eases managing high quantities of containers and many more.
