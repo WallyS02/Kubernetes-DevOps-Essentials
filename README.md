@@ -828,8 +828,8 @@ After preparing chart use **helm package \<chart_name\>** to package chart and *
   * **helm repo update \<repository_name\> \<repository_url\>** - updates information of available charts locally from chart repository
 * **helm search repo \<keyword\>** - searches repositories by keyword in charts
 * **helm install \<release_name\> \<chart_name\>** - installs chart
-* **helm status \<release_name\>** - displays the status of specified release
   * **helm install --values=\<values_file_name\> </values_file_name>\<release_name\> \<chart_name\>** - option that specifies custom values file which overrides values from default one
+* **helm status \<release_name\>** - displays the status of specified release
 * **helm list** - lists realeses
 * **helm upgrade \<release_name\> \<chart_name\>** - upgrades a release
 * **helm uninstall \<release_name\>** - uninstalls release
